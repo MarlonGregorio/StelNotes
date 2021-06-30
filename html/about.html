@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html class="gradient-area-blue">
+    <head>
+        <base href="[[=URL('static')]]/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA==" />
+        <link rel="stylesheet" href="css/bulma.css" />
+        <link rel="stylesheet" href="css/elements.css" />
+        <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]" />
+        <link rel="stylesheet" href="css/backgroundGradient.css" />
+    </head>
+    <body>
+        <div id="vue-target" v-cloak>
+            <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <div class="navbar-item">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
+                                <button class="button is-dark comic-sans" aria-haspopup="true" aria-controls="dropdown-menu"><img src="images/neko.png" />&nbsp; Stel Notes</button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                    <p class="dropdown-item menu-label">
+                                        Navigation
+                                    </p>
+                                    <ul class="dropdown-item menu-list">
+                                        <li>
+                                            <a :href="getLink('home')"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                        </li>
+                                        <li>
+                                            <a href="[[=URL('folders')]]"><i class="fa fa-folder" aria-hidden="true"></i> Folders</a>
+                                        </li>
+                                        <li>
+                                            <a href="[[=URL('publicnotebooks')]]"><i class="fa fa-book" aria-hidden="true"></i> Public Notebooks</a>
+                                        </li>
+                                    </ul>
+                                    <hr class="dropdown-divider" />
+                                    <p class="dropdown-item menu-label">
+                                        User
+                                    </p>
+                                    <ul class="dropdown-item menu-list">
+                                        <!--<li v-if="user != null"><a href="[[=URL('auth/logout')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a></li>-->
+                                        <li>
+                                            <a href="[[=URL('account')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a>
+                                        </li>
+                                        <li v-if="user != null">
+                                            <a href="[[=URL('auth/logout')]]"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a>
+                                        </li>
+                                        <li v-if="user == null">
+                                            <a href="[[=URL('auth/login')]]"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign In</a>
+                                        </li>
+                                    </ul>
+                                    <hr class="dropdown-divider" />
+                                    <ul class="dropdown-item menu-list">
+                                        <li>
+                                            <a href="[[=URL('features')]]"><i class="fa fa-question-circle" aria-hidden="true"></i> Need Help</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a
+                        role="button"
+                        class="navbar-burger burger"
+                        aria-label="menu"
+                        aria-expanded="false"
+                        data-target="left-navbar"
+                        onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');"
+                    >
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div id="left-navbar" class="navbar-menu"></div>
+            </nav>
+            <section class="hero">
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="title is-1">
+                            About
+                        </div>
+                        <h2 class="subtitle">
+                            Find out what runs in the background
+                        </h2>
+                    </div>
+                </div>
+            </section>
+            <section class="container">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a :href="getLink('home')">
+                                <span class="icon is-small">
+                                    <i class="fa fa-home" aria-hidden="true"></i>
+                                </span>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="is-active">
+                            <a href="">
+                                <span class="icon is-small">
+                                    <i class="fa fa-info" aria-hidden="true"></i>
+                                </span>
+                                <span>About</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <br />
+                <div class="box">
+                    <div class="title is-2" style="text-decoration: underline;">What is Stel Notes</div>
+                    <br />
+
+                    <div class="content is-medium">
+                        <div class="title">
+                            <span class="title has-text-grey">S</span>harable<br />
+                            <span class="title has-text-grey">T</span>ransformable<br />
+                            <span class="title has-text-grey">E</span>xportable<br />
+                            <span class="title has-text-grey">L</span>istable<br />
+                        </div>
+                        <p>
+                            Share notes to friends and work alongside each other. Transform notes typed in google docs or written down into something with color and proper organization. Export created notebooks or sets of notes as local back-ups or as a means of manual sharing. All notes are created as lists that allow the grouping, rearranging, and ranking of notes. These features and this website is my attempt at creating a more productive study session.
+                        </p>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="title is-2" style="text-decoration: underline;">Framework</div>
+                    <br />
+                    <div class="content is-medium">
+                        <div class="title">Py4web</div>
+                        <p>
+                            "PY4WEB is a web framework for the rapid development of efficient database-driven web applications. It is an evolution of the popular web2py framework but much faster and slicker. Its internal design has been much simplified compared to web2py. PY4WEB can be seen as a competitor of other frameworks like Django or Flask, and it can indeed serve the same purpose. Yet PY4WEB aims to provide a larger feature set out of the box and reduce the development time of new apps." -PY4WEB documentation
+                            <br />
+                            <a href="https://py4web.com/_documentation/static/index.html">
+                                https://py4web.com/_documentation/static/index.html
+                            </a>
+                        </p>
+                        <br />
+                        <div class="title">Vue.js</div>
+                        <p>
+                            "Vue (pronounced /vjuː/, like view) is a progressive framework for building user interfaces. Unlike other monolithic frameworks, Vue is designed from the ground up to be incrementally adoptable. The core library is focused on the view layer only, and is easy to pick up and integrate with other libraries or existing projects. On the other hand, Vue is also perfectly capable of powering sophisticated Single-Page Applications when used in combination with modern tooling and supporting libraries." -Vue.js documentation
+                            <br />
+                            <a href="https://vuejs.org">
+                                https://vuejs.org
+                            </a>
+                        </p>
+                        <br />
+                        <div class="title">Bulma CSS</div>
+                        <p>
+                            "Bulma is a free, open-source CSS framework based on Flexbox and used by more than 200,000 developers. Bulma is also considered a mobile-first framework and optimizes for vertical reading. In the end, Bulma is simply a collection of CSS classes. Write the HTML code you want." -Bulma documentation
+                            <br />
+                            <a href="https://bulma.io">
+                                https://bulma.io
+                            </a>
+                        </p>
+                        <br />
+                        <div class="title">Font Awesome</div>
+                        <p>
+                            "Font Awesome gives you scalable vector icons that can instantly be customized — size, color, drop shadow, and anything that can be done with the power of CSS." -Font Awesome documentation
+                            <br />
+                            <a href="https://fontawesome.com/v4.7.0">
+                                https://fontawesome.com/v4.7.0
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <br />
+        </div>
+    </body>
+    <script src="js/sugar.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        let homePageSlash = "[[=URL('')]]";
+        let user_status = "[[=XML(user_status)]]";
+    </script>
+    <script src="js/html/simple.js"></script>
+</html>

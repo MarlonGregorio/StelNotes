@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="gradient-area-primary">
+    <head>
+        <base href="[[=URL('static')]]/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA==" />
+        <link rel="stylesheet" href="css/bulma.css" />
+        <link rel="stylesheet" href="css/elements.css" />
+        <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]" />
+        <link rel="stylesheet" href="css/backgroundGradient.css" />
+    </head>
+    <body>
+        <div id="vue-target" v-cloak >
+            <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <div class="navbar-item">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
+                                <button class="button is-dark comic-sans" aria-haspopup="true" aria-controls="dropdown-menu"><img src="images/neko.png" />&nbsp; Stel Notes</button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                    <p class="dropdown-item menu-label">
+                                        Navigation
+                                    </p>
+                                    <ul class="dropdown-item menu-list">
+                                        <li>
+                                            <a :href="getLink('home')"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                        </li>
+                                        <li>
+                                            <a href="[[=URL('folders')]]"><i class="fa fa-folder" aria-hidden="true"></i> Folders</a>
+                                        </li>
+                                        <li>
+                                            <a href="[[=URL('publicnotebooks')]]"><i class="fa fa-book" aria-hidden="true"></i> Public Notebooks</a>
+                                        </li>
+                                    </ul>
+                                    <hr class="dropdown-divider" />
+                                    <p class="dropdown-item menu-label">
+                                        User
+                                    </p>
+                                    <ul class="dropdown-item menu-list">
+                                        <!--<li v-if="user != null"><a href="[[=URL('auth/logout')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a></li>-->
+                                        <li>
+                                            <a href="[[=URL('account')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a>
+                                        </li>
+                                        <li v-if="user != null">
+                                            <a href="[[=URL('auth/logout')]]"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a>
+                                        </li>
+                                        <li v-if="user == null">
+                                            <a href="[[=URL('auth/login')]]"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign In</a>
+                                        </li>
+                                    </ul>
+                                    <hr class="dropdown-divider" />
+                                    <ul class="dropdown-item menu-list">
+                                        <li>
+                                            <a href="[[=URL('features')]]"><i class="fa fa-question-circle" aria-hidden="true"></i> Need Help</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a
+                        role="button"
+                        class="navbar-burger burger"
+                        aria-label="menu"
+                        aria-expanded="false"
+                        data-target="left-navbar"
+                        onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');"
+                    >
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div id="left-navbar" class="navbar-menu"></div>
+            </nav>
+
+            <section class="hero">
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="title is-1">
+                            Contact
+                        </div>
+                        <h2 class="subtitle">
+                            Please allow up to a day for a response
+                        </h2>
+                    </div>
+                </div>
+            </section>
+            <section class="container">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a :href="getLink('home')">
+                                <span class="icon is-small">
+                                    <i class="fa fa-home" aria-hidden="true"></i>
+                                </span>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="is-active">
+                            <a href="">
+                                <span class="icon is-small">
+                                    <i class="fa fa-address-book-o" aria-hidden="true"></i>
+                                </span>
+                                <span>Contact</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <br />
+                <div class="box">
+                    <div class="title is-2" style="text-decoration: underline;">Have any questions, concerns, or suggestions?</div>
+                    <br />
+                    <div class="content is-medium">
+                        <div class="title">Feel free to email one of the addresses below</div>
+                        <ul>
+                            <li>mogregor@ucsc.edu</li>
+                            <li>marlongregorio1213@gmail.com</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="title is-2" style="text-decoration: underline;">Requested a password reset lately?</div>
+                    <br />
+                    <div class="content is-medium">
+                        <div class="title">Please do not respond to stelnotes@gmail.com</div>
+                        <p>
+                            This email is only used to send password reset links.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <br />
+        </div>
+    </body>
+    <script src="js/sugar.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        let homePageSlash = "[[=URL('')]]";
+        let user_status = "[[=XML(user_status)]]";
+    </script>
+    <script src="js/html/simple.js"></script>
+</html>

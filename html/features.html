@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="gradient-area-yellow">
+    <head>
+        <base href="[[=URL('static')]]/" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA==" />
+        <link rel="stylesheet" href="css/bulma.css" />
+        <link rel="stylesheet" href="css/elements.css" />
+        <link rel="stylesheet" href="[[=URL('static', 'font-awesome-4.7.0/css/font-awesome.css')]]" />
+        <link rel="stylesheet" href="css/backgroundGradient.css" />
+    </head>
+    <body>
+        <div id="vue-target" v-cloak>
+            <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <div class="navbar-item">
+                        <div class="dropdown is-hoverable">
+                            <div class="dropdown-trigger">
+                                <button class="button is-dark comic-sans" aria-haspopup="true" aria-controls="dropdown-menu"><img src="images/neko.png" />&nbsp; Stel Notes</button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                <div class="dropdown-content">
+                                    <p class="dropdown-item menu-label">
+                                        Navigation
+                                    </p>
+                                    <ul class="dropdown-item menu-list">
+                                        <li>
+                                            <a :href="getLink('home')"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                        </li>
+                                        <li>
+                                            <a href="[[=URL('folders')]]"><i class="fa fa-folder" aria-hidden="true"></i> Folders</a>
+                                        </li>
+                                        <li>
+                                            <a href="[[=URL('publicnotebooks')]]"><i class="fa fa-book" aria-hidden="true"></i> Public Notebooks</a>
+                                        </li>
+                                    </ul>
+                                    <hr class="dropdown-divider" />
+                                    <p class="dropdown-item menu-label">
+                                        User
+                                    </p>
+                                    <ul class="dropdown-item menu-list">
+                                        <!--<li v-if="user != null"><a href="[[=URL('auth/logout')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a></li>-->
+                                        <li>
+                                            <a href="[[=URL('account')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a>
+                                        </li>
+                                        <li v-if="user != null">
+                                            <a href="[[=URL('auth/logout')]]"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a>
+                                        </li>
+                                        <li v-if="user == null">
+                                            <a href="[[=URL('auth/login')]]"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign In</a>
+                                        </li>
+                                    </ul>
+                                    <hr class="dropdown-divider" />
+                                    <ul class="dropdown-item menu-list">
+                                        <li>
+                                            <a href="[[=URL('features')]]"><i class="fa fa-question-circle" aria-hidden="true"></i> Need Help</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <a
+                        role="button"
+                        class="navbar-burger burger"
+                        aria-label="menu"
+                        aria-expanded="false"
+                        data-target="left-navbar"
+                        onclick="this.classList.toggle('is-active');document.getElementById(this.dataset.target).classList.toggle('is-active');"
+                    >
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div id="left-navbar" class="navbar-menu"></div>
+            </nav>
+            <section class="hero">
+                <div class="hero-body">
+                    <div class="container">
+                        <div class="title is-1">
+                            Features
+                        </div>
+                        <h2 class="subtitle">
+                            More useful information
+                        </h2>
+                    </div>
+                </div>
+            </section>
+            <section class="container">
+                <nav class="breadcrumb" aria-label="breadcrumbs">
+                    <ul>
+                        <li>
+                            <a :href="getLink('home')">
+                                <span class="icon is-small">
+                                    <i class="fa fa-home" aria-hidden="true"></i>
+                                </span>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li class="is-active">
+                            <a href="">
+                                <span class="icon is-small">
+                                    <i class="fa fa-star" aria-hidden="true"></i>
+                                </span>
+                                <span>Features</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <br />
+                <div class="box">
+                    <div class="title is-2" style="text-decoration: underline;">Where things are located</div>
+                    <br />
+                    <div class="content is-medium">
+                        <div class="title">The website dropdown</div>
+                        <p>
+                            The website name on the top left is a dropdown. In the dropdown are some navigation links to the home page, folders page, and public notebooks page. The user account page can also be found here alongside the sign-out or sign-in button depending on the user login status. At the end of the dropdown is the help link which links to this page.
+                        </p>
+                        <br />
+                        <div class="title">The Navigation list</div>
+                        <p>
+                            Right above this box is a list of links in the file explorer format. One goes to the home page and the other one represents the current page. This list will also appear on other pages with a different length, depending on how far someone is on the website.
+                        </p>
+                        <br />
+                        <div class="title">The Back button</div>
+                        <p>
+                            The Navigation list will disappear if a set of notes in a notebook is selected. The back button goes back to the main notebook. It will even have some of the notebook's title if not all to signal its purpose.
+                        </p>
+                        <br />
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="title is-2" style="text-decoration: underline;">How to perform actions</div>
+                    <br />
+
+                    <div class="content is-medium">
+                        <div class="title">Editing, deleting, and making a copy of notebooks/notes</div>
+                        <p>
+                            After clicking on a notebook or a set of notes. There is a gear icon that acts as a dropdown. One can edit, delete, export, and import from the dropdown. If a notebook or a set of notes is going to be deleted, a warning prompt will be shown. If the notebook is in the "Shared Notebooks" folder it will be removed instead of deleted. Exporting will download a file of the notebook or set of notes data. Importing will restore the data of an exported file. Importing notes from Excel is also supported(xls or xlsx file) with 2 to 3 required columns. The first column is for terms, the second is for definitions, and the third(optional) is for examples or any extra info.
+                        </p>
+                        <br />
+                        <div class="title">Sharing a notebook</div>
+                        <p>
+                            Notebooks can be shared from the "My Notebooks" folder. Multiple notebooks can be shared at once to multiple recipients. No one has to be specified at the moment. Anyone with edit access can share with more people in the "Shared Notebooks" folder. When sharing, a permission(Edit or View) has to be selected. The owner of the notebook will always have edit access.
+                        </p>
+                        <br />
+                        <div class="title">Resetting a password</div>
+                        <p>
+                            If you forgot your password, you can request a reset from the login page on the last tab. The login page can be reached when "Get Started" is clicked on the homepage or anytime from the dropdown on the top left. If you still know your password and just want to update it, go to the account page from the website dropdown. You will be sent an email with a one time link by stelnotes@gmail.com.
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <br />
+        </div>
+    </body>
+
+    <script src="js/sugar.min.js"></script>
+    <script src="js/axios.min.js"></script>
+    <script src="js/vue.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        let homePageSlash = "[[=URL('')]]";
+        let user_status = "[[=XML(user_status)]]";
+    </script>
+    <script src="js/html/simple.js"></script>
+</html>

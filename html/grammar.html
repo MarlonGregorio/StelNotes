@@ -1,0 +1,453 @@
+[[extend 'layout.html']]
+
+<div id="vue-target" v-cloak>
+    <div class="modal" :class="modalValue">
+        <div class="modal-background" @click="setModal(0)"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">{{modalTitle}}</p>
+                <button class="delete" aria-label="close" @click="setModal(0)"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    <div class="title" style="white-space: pre-wrap;">{{modalBody}}</div>
+                    <div class="subtitle" v-if="modalFooter.length > 0" style="white-space: pre-wrap;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;{{modalFooter}}</div>
+                </div>
+                <div class = "title" v-if="modalTask == 1">File Type</div>
+                <div class="tabs is-toggle is-toggle-rounded is-small" v-if="modalTask == 1">
+                  <ul>
+                    <li :class="getValue('modalTab1', modalTab1,0)">
+                      <a @click="setValue('modalTab1',0)">
+                        <span class="icon is-small"><i class="fa fa-file-text-o"></i></span>
+                        <span>Note Set</span>
+                      </a>
+                    </li>
+                    <li :class="getValue('modalTab1', modalTab1,1)">
+                      <a @click="setValue('modalTab1',1)">
+                        <span class="icon is-small"><i class="fa fa-file-excel-o"></i></span>
+                        <span>Excel</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <div class = "title" v-if="modalTask == 1">Method</div>
+                <div class="tabs is-toggle is-toggle-rounded is-small" v-if="modalTask == 1">
+                  <ul>
+                    <li :class="getValue('modalTab2', modalTab2,0)">
+                      <a @click="setValue('modalTab2',0)">
+                        <span class="icon is-small"><i class="fa fa-plus-square"></i></span>
+                        <span>Add to notes</span>
+                      </a>
+                    </li>
+                    <li :class="getValue('modalTab2', modalTab2,1)">
+                      <a @click="setValue('modalTab2',1)">
+                        <span class="icon is-small"><i class="fa fa-plus-square-o"></i></span>
+                        <span>Overwrite all</span>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+                <input id="file_input" class="file comic-sans" type="file" v-if="modalTask == 1" v-on:change="setValue('event',$event)" />
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success comic-sans" @click="setModal(-1)"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Confirm</button>
+                <button class="button is-danger comic-sans" @click="setModal(0)"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Cancel</button>
+            </footer>
+        </div>
+    </div>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation"><!--Navbar-->
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <div class="dropdown is-hoverable">
+                    <div class="dropdown-trigger">
+                        <button class="button is-dark comic-sans" aria-haspopup="true" aria-controls="dropdown-menu"><img src="images/neko.png" />&nbsp; Stel Notes</button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                        <div class="dropdown-content">
+                            <p class="dropdown-item menu-label">
+                                Navigation
+                            </p>
+                            <ul class="dropdown-item menu-list">
+                                <li>
+                                    <a :href="getLink('home')"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                </li>
+                                <li>
+                                    <a href="[[=URL('folders')]]"><i class="fa fa-folder" aria-hidden="true"></i> Folders</a>
+                                </li>
+                                <li>
+                                    <a href="[[=URL('publicnotebooks')]]"><i class="fa fa-book" aria-hidden="true"></i> Public Notebooks</a>
+                                </li>
+                            </ul>
+                            <hr class="dropdown-divider" />
+                            <p class="dropdown-item menu-label">
+                                User
+                            </p>
+                            <ul class="dropdown-item menu-list">
+                                <!--<li v-if="user != null"><a href="[[=URL('auth/logout')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a></li>-->
+                                <li>
+                                    <a href="[[=URL('account')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a>
+                                </li>
+                                <li v-if="user != null">
+                                    <a href="[[=URL('auth/logout')]]"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a>
+                                </li>
+                                <li v-if="user == null">
+                                    <a href="[[=URL('auth/login')]]"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign In</a>
+                                </li>
+                            </ul>
+                            <hr class="dropdown-divider" />
+                            <ul class="dropdown-item menu-list">
+                                <li>
+                                    <a href="[[=URL('features')]]"><i class="fa fa-question-circle" aria-hidden="true"></i> Need Help</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="box" v-if = "!flashFullScreen"><!--Page note title-->
+        <div class="has-text-right">
+            <div class="dropdown is-hoverable is-right" :class="getValue('state')" v-if="editorPage != null & editorBook != null">
+                <div class="dropdown-trigger">
+                    <a class="button is-white" aria-haspopup="true" aria-controls="dropdown-menu4">
+                        <i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+                    </a>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                    <div class="dropdown-content has-text-left">
+                        <a v-if="canEdit" class="dropdown-item" @click="editNotePage()"> <i class="fa fa-pencil" aria-hidden="true"></i> Edit Title </a>
+                        <hr v-if="canEdit" class="dropdown-divider" />
+                        <a v-if="canEdit" class="dropdown-item" @click="setModal(1)"> <i class="fa fa-upload" aria-hidden="true"></i> Import Notes </a>
+                        <hr v-if="canEdit" class="dropdown-divider" />
+                        <a v-if="canView" class="dropdown-item" @click="setModal(2)"> <i class="fa fa-download" aria-hidden="true"></i> Export Notes </a>
+                        <hr v-if="canEdit" class="dropdown-divider" />
+                        <a v-if="canEdit" class="dropdown-item" @click="setModal(3)"> <i class="fa fa-trash" aria-hidden="true"></i> Delete Notes </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="has-text-centered">
+            <div class="title is-1">{{getPageTitle()}}</div>
+        </div>
+        <div class="columns" v-if="tempNote2 != null">
+            <div class="column"></div>
+            <div class="column">
+                <input class="input is-large has-text-centered comic-sans" type="text" placeholder="Title" v-model="tempNote2.title" />
+                <br />
+                <br />
+                <div class="has-text-centered">
+                    <a class="button is-success" @click="saveNotePage()"> <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbspUpdate </a>
+                    <a class="button is-danger" @click="editorPage.state = 0; editing = false; tempNote2 = null"> <i class="fa fa-times" aria-hidden="true"></i>&nbspCancel </a>
+                </div>
+            </div>
+            <div class="column"></div>
+        </div>
+        <br />
+    </div>
+    <div class="container" v-if = "!flashFullScreen & !isMobile()">
+        <div class="level">
+            <div class="level-left">
+                <a class="level-item button is-dark is-rounded" :href="getLink('notebook')">
+                    <span class="icon"><i class="fa fa-arrow-left"></i></span>
+                    <span v-if="editorBook != null & canView">{{shrinkString(editorBook.title)}}</span>
+                </a>
+            </div>
+            <div class="level-right" v-if="noNotes == false">
+                <a class="level-item button is-link is-rounded is-outlined" @click="initFlashcardMode(true)" v-if="flashcardMode == false">
+                    <span class="icon"><i class="fa fa-window-maximize"></i></span>
+                    <span v-if="editorBook != null & canView">Flashcard Mode</span>
+                </a>
+                <a class="level-item button is-link is-rounded is-outlined" @click="initFlashcardMode(false)" v-if="flashcardMode == true">
+                    <span class="icon"><i class="fa fa-square-o"></i></span>
+                    <span v-if="editorBook != null & canView">Normal Mode</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="container" v-if = "!flashFullScreen & isMobile()">
+        <div class="level">
+            <div class="level-item">
+                <a class="button is-dark is-rounded" :href="getLink('notebook')">
+                    <span class="icon"><i class="fa fa-arrow-left"></i></span>
+                    <span v-if="editorBook != null & canView">{{shrinkString(editorBook.title)}}</span>
+                </a>
+            
+                <div v-if="noNotes == false">
+                    <a class="button is-link is-rounded is-outlined" @click="initFlashcardMode(true)" v-if="flashcardMode == false">
+                        <span class="icon"><i class="fa fa-window-maximize"></i></span>
+                        <span v-if="editorBook != null & canView">Flashcard Mode</span>
+                    </a>
+                    <a class="button is-link is-rounded is-outlined" @click="initFlashcardMode(false)" v-if="flashcardMode == true">
+                        <span class="icon"><i class="fa fa-square-o"></i></span>
+                        <span v-if="editorBook != null & canView">Normal Mode</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+	<div class="container">
+        <div class="level" >
+            <div class="level-item" v-if="flashcardMode == true & !flashFullScreen">
+            	<div class = "buttons">
+                    <a class="button is-rounded is-dark" @click="initFlashColor(false,0)" v-if="flashBlack">
+                        <span class="icon"><i class="fa fa-check-square-o"></i></span>
+                    </a>
+                    <a class="button is-rounded is-dark" @click="initFlashColor(true,0)" v-if="!flashBlack">
+                        <span class="icon"><i class="fa fa-square-o"></i></span>
+                    </a>
+                    <a class="button is-rounded is-primary" @click="initFlashColor(false,1)" v-if="flashPrimary">
+                        <span class="icon"><i class="fa fa-check-square-o"></i></span>
+                    </a>
+                     <a class="button is-rounded is-primary" @click="initFlashColor(true,1)" v-if="!flashPrimary">
+                        <span class="icon"><i class="fa fa-square-o"></i></span>
+                    </a>
+                    <a class="button is-rounded is-warning" @click="initFlashColor(false,2)" v-if="flashWarning">
+                        <span class="icon"><i class="fa fa-check-square-o"></i></span>
+                    </a>
+                    <a class="button is-rounded is-warning" @click="initFlashColor(true,2)" v-if="!flashWarning">
+                        <span class="icon"><i class="fa fa-square-o"></i></span>
+                    </a>
+                    <a class="button is-rounded is-danger" @click="initFlashColor(false,3)" v-if="flashDanger">
+                        <span class="icon"><i class="fa fa-check-square-o"></i></span>
+                    </a>
+                    <a class="button is-rounded is-danger" @click="initFlashColor(true,3)" v-if="!flashDanger">
+                        <span class="icon"><i class="fa fa-square-o"></i></span>
+                    </a>
+	                <a class="button is-rounded is-outlined" @click="initFlashRandom(true)"  v-if="flashRandom == false">
+	                    <span class="icon"><i class="fa fa-random"></i></span>
+	                </a>
+	                <a class="button is-link is-rounded" @click="initFlashRandom(false)" v-if="flashRandom">
+	                    <span class="icon"><i class="fa fa-random"></i></span>
+	                </a>
+
+	                <a class="button is-rounded is-outlined" @click="initFlashSwap(true)" v-if="flashSwap == false">
+	                    <span class="icon"><i class="fa fa-exchange"></i></span>
+	                </a>
+	                <a class="button is-link is-rounded" @click="initFlashSwap(false)" v-if="flashSwap">
+	                    <span class="icon"><i class="fa fa-exchange"></i></span>
+	                </a>
+                    <a class="button is-rounded" @click="initFlashSound()">
+                        <span class="icon"><i class="fa fa-volume-up"></i></span>
+                    </a>
+                    <a class="button is-rounded is-outlined" @click="initFlashPlay(true)" v-if="!flashPlay">
+                        <span class="icon"><i class="fa fa-play"></i></span>
+                    </a>
+                    <a class="button is-link is-rounded" @click="initFlashPlay(false)" v-if="flashPlay">
+                        <span class="icon"><i class="fa fa-play"></i></span>
+                    </a>
+	            </div>
+            </div>
+        </div>
+        <div class="box" v-if="flashcardMode == true"><!-- Giant Flashcard -->
+            <div class="is-centered is-large tabs" v-if="notesRandom[flashIndex].state == 0">
+                <a class="button is-rounded has-text-dark" :class="getValue('color', notesRandom[flashIndex].level)">
+                </a>
+                
+                <ul>
+                    <li :class="getValue('flashTab', flashTab,0)"><a @click="setValue('flashTab', flashTab,0)">Term</a></li>
+                    <li :class="getValue('flashTab', flashTab,1)"><a @click="setValue('flashTab', flashTab,1)">Definition</a></li>
+                </ul>
+                <a class="button is-rounded is-outlined" @click="initFlashFullScreen(true)" v-if="!flashFullScreen">
+                    <span class="icon"><i class="fa fa-window-maximize"></i></span>
+                </a>
+                <a class="button is-rounded is-outlined is-link" @click="initFlashFullScreen(false)" v-if="flashFullScreen">
+                    <span class="icon"><i class="fa fa-window-maximize"></i></span>
+                </a>
+            </div>
+            <div class="hero-body has-text-centered" style="cursor: pointer;" 
+            	@click = "if (flashTab==0){flashTab = 1} else{flashTab = 0}">
+                <div class="title is-1" v-if="getValue('flashTab', flashTab,0) == 'is-active'">{{notesRandom[flashIndex].title}}</div>
+                <div class="title is-1" v-if="getValue('flashTab', flashTab,1) == 'is-active'" 
+                style="white-space: pre-wrap;">{{notesRandom[flashIndex].rules}}</div>
+                <br />
+            	<br />
+            </div>
+            <div class="tabs is-fullwidth">
+                <ul>
+                    <li>
+                        <a @click="flashArrow('left')">
+                            <span class="icon"><i class="fa fa-angle-left" aria-hidden="true"></i></span>
+                            <span>Previous</span>
+                        </a>
+                    </li>
+                    <li class="is-active">
+                        <a>
+                            <span>{{notesRandom[flashIndex].index}}</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a @click="flashArrow('right')">
+                            <span>Next</span>
+                            <span class="icon"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class = "has-text-right">
+            	{{flashIndex+1}}/{{notesRandom.length}}
+            </div>
+        </div>
+    </div>
+    <div class="container" v-if="flashcardMode == false"> <!-- Normal Display info-->
+        <div class="buttons is-centered"> <!-- Page Navigation 1-->
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink(pageIndex-1,0)" v-if="onAll()==false">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </a>
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink(noteSet.length,0)" v-if="onAll()">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </a>
+            <div v-if = "pageNumbers[0] > 1">...</div>
+            <a class="button is-small is-rounded has-text-weight-bold" v-for="page in pageNumbers" @click="shadowLink(page,0)" :class="getValue('pageNav',page)">
+                {{page}}
+            </a>
+            <div v-if = "pageNumbers[pageNumbers.length-1] < noteSet.length" >...</div>
+            <a class="button is-small is-rounded has-text-weight-bold" @click="shadowLink('All', 2)" :class="getValue('pageNav','All')">
+                All
+            </a>
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink(pageIndex-1+2,0)" v-if="onAll()==false">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink('All',2)" v-if="onAll()">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+        </div>       
+        <br />
+        <div class="has-text-centered" v-if="canEdit & editorBook != null & editorPage != null"><!--Add button if no notes-->
+            <button class="button is-dark comic-sans" v-if="noNotes" @click="addNote(0)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</button>
+        </div>
+        <div v-if="canView" v-for="note in noteSet[pageIndex-1]">
+            <!--All Notes-->
+            <div class="tile is-ancestor notification is-vertical" :class="getValue('color', note.level)">
+                <div class="columns">
+                    <div class="column is-one-fifth" v-if="note.state == 1">
+                        <input class="input is-large is-primary comic-sans" type="number" min="0" step="1" placeholder="Idx" v-if="note.state == 1" v-model="tempIndex" />
+                    </div>
+                    <div class="column" v-if="note.state == 1">
+                        <input class="input is-large is-primary comic-sans" type="text" placeholder="Title" v-if="note.state == 1" v-model="note.title" />
+                    </div>
+                    <div class="column" v-if="note.state == 0">
+                        <div class="title is-2" v-if="note.state == 0" style="text-decoration: underline;">{{note.index}}. {{note.title}}</div>
+                    </div>
+                    <div class="column"></div>
+                    <div class="column is-1 has-text-right">
+                        <div class="dropdown is-hoverable is-right" v-if="canEdit">
+                            <div class="dropdown-trigger">
+                                <button class="button" :class="getValue('color', note.level)" aria-haspopup="true" aria-controls="dropdown-menu4">
+                                    <span class="icon">
+                                        <i class="fa fa-tasks fa-2x" aria-hidden="true"></i>
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                                <div class="dropdown-content has-text-left">
+                                    <a class="dropdown-item" @click="editNote(note.index)"> <i class="fa fa-pencil" aria-hidden="true"></i> Edit Note </a>
+                                    <hr class="dropdown-divider" />
+                                    <a class="dropdown-item" @click="deleteNote(note.index)"> <i class="fa fa-trash" aria-hidden="true"></i> Delete Note </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="columns">
+                    <div class="column is-one-fifth"></div>
+                    <div class="column">
+                        <div class="box notification is-dark" v-if="note.state == 0 & note.level != 0">
+                            <div class="title is-3" v-if="note.state == 0" style="white-space: pre-wrap;">{{note.rules}}</div>
+                        </div>
+                        <div class="box notification is-light" v-if="note.state == 0 & note.level == 0">
+                            <div class="title is-3" v-if="note.state == 0" style="white-space: pre-wrap;">{{note.rules}}</div>
+                        </div>
+                        <textarea class="textarea is-medium comic-sans" placeholder="Rules" v-if="note.state == 1" v-model="note.rules"></textarea>
+                        <div class="title is-3" v-if="note.state == 0" style="white-space: pre-wrap;">{{note.examples}}</div>
+                        <br v-if="note.state == 1" />
+                        <textarea class="textarea is-medium comic-sans" placeholder="Examples" v-if="note.state == 1" v-model="note.examples"></textarea>
+                        <div class="has-text-centered" v-if="note.state == 1">
+                            <br />
+                            <a class="button is-success is-inverted" @click="saveNote(note.index)"> <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbspUpdate </a>
+                            <a class="button is-danger is-inverted" @click="cancelNote(note.index)"> <i class="fa fa-times" aria-hidden="true"></i>&nbspCancel </a>
+                        </div>
+                    </div>
+                    <div class="column is-one-fifth"></div>
+                </div>
+                <nav class="level" v-if="note.state == 1">
+                    <div class="level-right">
+                        <a class="level-item image is-32x32"><img src="[[=URL('static', 'images/black box.png')]]" @click="setValue('note', note.index, 0)" /></a>
+                        <a class="level-item image is-32x32"><img src="[[=URL('static', 'images/green box.png')]]" @click="setValue('note', note.index, 1)" /></a>
+                        <a class="level-item image is-32x32"><img src="[[=URL('static', 'images/yellow box.png')]]" @click="setValue('note', note.index, 2)" /></a>
+                        <a class="level-item image is-32x32"><img src="[[=URL('static','images/red box.png')]]" @click="setValue('note', note.index, 3)" /></a>
+                    </div>
+                </nav>
+            </div>
+            <!--End of Tile Note-->
+            <nav class="level">
+                <!--Add button-->
+                <div class="level-item" v-if="canEdit">
+                    <a class="image is-48x48" @mouseover="setValue('button2', note.index, 1)" @mouseleave="setValue('button2', note.index, 0)">
+                        <img src="[[=URL('static', 'images/circleBlack.png')]]" @click="addNote(note.index)" v-if="note.showButton2 == 0" />
+                        <img src="[[=URL('static', 'images/plus.png')]]" @click="addNote(note.index)" v-if="note.showButton2 == 1" />
+                    </a>
+                </div>
+            </nav>
+            <br v-if="canEdit == false" />
+            <nav class="level"></nav>
+        </div>
+        <!--Page number navigation 2-->
+        <div class="buttons is-centered" v-if="notes.length - (pageIndex-1)*maxNotes > 2">
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink(pageIndex-1,0)" v-if="onAll()==false">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </a>
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink(noteSet.length,0)" v-if="onAll()">
+                <i class="fa fa-chevron-left" aria-hidden="true"></i>
+            </a>
+            <a class="button is-small is-rounded has-text-weight-bold" v-for="page in pageNumbers" @click="shadowLink(page,0)" :class="getValue('pageNav',page)">
+                {{page}}
+            </a>
+            <a class="button is-small is-rounded has-text-weight-bold" @click="shadowLink('All', 2)" :class="getValue('pageNav','All')">
+                All
+            </a>
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink(pageIndex-1+2,0)" v-if="onAll()==false">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+            <a class="button is-small is-rounded is-white has-text-weight-bold" @click="shadowLink('All',2)" v-if="onAll()">
+                <i class="fa fa-chevron-right" aria-hidden="true"></i>
+            </a>
+        </div>    
+        <br />
+    </div><!--End of container-->
+</div><!-- End of vue target-->
+
+[[block page_scripts]]
+<script>
+    let homePageSlash = "[[=URL('')]]";
+    let user_status = "[[=XML(user_status)]]";
+    let htmlPage = "[[=XML(htmlPage)]]";
+
+    let save_note = "[[=XML(save_note)]]";
+    let get_notes = "[[=XML(get_notes)]]";
+    let get_notebooks = "[[=XML(get_notebooks)]]";
+    let get_note_pages = "[[=XML(get_note_pages)]]";
+    let delete_note = "[[=XML(delete_note)]]";
+
+    let page_number = "[[=XML(page_number)]]";
+    let note_page_number = "[[=XML(note_page_number)]]";
+    let notebook_number = "[[=XML(notebook_number)]]";
+    let respond_type = "[[=XML(respond_type)]]";
+
+    let basePath1 = "[[=URL('folders/mynotebooks/editor', vars=dict(notebook=''))]]";
+    let basePath2 = "[[=URL('folders/sharednotebooks/editor', vars=dict(notebook=''))]]";
+    let basePath3 = "[[=URL('guest/editor', vars=dict(notebook=''))]]";
+    let basePathX = "[[=URL('grammar')]]";
+
+    let delete_note_page = "[[=XML(delete_note_page)]]";
+    let save_note_page = "[[=XML(save_note_page)]]";
+    let import_notes_all = "[[=XML(import_notes_all)]]";
+    let add_notes_all = "[[=XML(add_notes_all)]]";
+    let add_notes_allx = "[[=XML(add_notes_allx)]]";
+    let import_notes_allx = "[[=XML(import_notes_allx)]]";
+</script>
+<script src="js/html/notes.js"></script>
+[[end]]

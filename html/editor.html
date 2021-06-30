@@ -1,0 +1,337 @@
+[[extend 'layout.html']]
+
+<div id="vue-target" v-cloak>
+    <div class="modal" :class="modalValue">
+        <div class="modal-background" @click="setModal(0)"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">{{modalTitle}}</p>
+                <button class="delete" aria-label="close" @click="setModal(0)"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="content">
+                    <div class="title" style="white-space: pre-wrap;">{{modalBody}}</div>
+                    <div class="subtitle" v-if="modalFooter.length > 0" style="white-space: pre-wrap;"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i>&nbsp;{{modalFooter}}</div>
+                </div>
+                <input id="file_input" class="file" type="file" v-if="modalTask == 1" v-on:change="setValue('event',$event)" />
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success comic-sans" @click="setModal(-1)"><i class="fa fa-check" aria-hidden="true"></i>&nbsp;Confirm</button>
+                <button class="button is-danger comic-sans" @click="setModal(0)"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;Cancel</button>
+            </footer>
+        </div>
+    </div>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <!--Navbar-->
+        <div class="navbar-brand">
+            <div class="navbar-item">
+                <div class="dropdown is-hoverable">
+                    <div class="dropdown-trigger">
+                        <button class="button is-dark comic-sans" aria-haspopup="true" aria-controls="dropdown-menu"><img src="images/neko.png"/>&nbsp; Stel Notes</button>
+                    </div>
+                    <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                        <div class="dropdown-content">
+                            <p class="dropdown-item menu-label">
+                                Navigation
+                            </p>
+                            <ul class="dropdown-item menu-list">
+                                <li>
+                                    <a :href="getLink('home')"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                                </li>
+                                <li>
+                                    <a href="[[=URL('folders')]]"><i class="fa fa-folder" aria-hidden="true"></i> Folders</a>
+                                </li>
+                                <li>
+                                    <a href="[[=URL('publicnotebooks')]]"><i class="fa fa-book" aria-hidden="true"></i> Public Notebooks</a>
+                                </li>
+                            </ul>
+                            <hr class="dropdown-divider" />
+                            <p class="dropdown-item menu-label">
+                                User
+                            </p>
+                            <ul class="dropdown-item menu-list">
+                                <!--<li v-if="user != null"><a href="[[=URL('auth/logout')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a></li>-->
+                                <li>
+                                    <a href="[[=URL('account')]]"><i class="fa fa-user-circle" aria-hidden="true"></i> Account</a>
+                                </li>
+                                <li v-if="user != null">
+                                    <a href="[[=URL('auth/logout')]]"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a>
+                                </li>
+                                <li v-if="user == null">
+                                    <a href="[[=URL('auth/login')]]"><i class="fa fa-sign-in" aria-hidden="true"></i> Sign In</a>
+                                </li>
+                            </ul>
+                            <hr class="dropdown-divider" />
+                            <ul class="dropdown-item menu-list">
+                                <li>
+                                    <a href="[[=URL('features')]]"><i class="fa fa-question-circle" aria-hidden="true"></i> Need Help</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <section class="hero is-info">
+        <div class="hero-body" v-if="htmlPage !='editor3'">
+            <div class="container" v-if="user != null">
+                <div class="title">
+                    <i class="fa fa-user-o fa-2x" aria-hidden="true"></i>
+                    {{user.firstName}} {{user.lastName}}
+                </div>
+                <h2 class="subtitle">
+                    {{user.email}}
+                </h2>
+            </div>
+        </div>
+        <div class="hero-body" v-if="htmlPage =='editor3'">
+            <div class="container">
+                <div class="title is-1"><i class="fa fa-users fa-2x" aria-hidden="true"></i>
+                    Public Notebooks
+                </div>
+                <h2 class="subtitle">
+                    If you want to modify something, export a copy and import them in "My Notebooks".
+                </h2>
+            </div>
+        </div>
+    </section>
+    <br />
+    <div class="container">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li>
+                    <a :href="getLink('home')">
+                        <span class="icon is-small">
+                            <i class="fa fa-home" aria-hidden="true"></i>
+                        </span>
+                        <span>Home</span>
+                    </a>
+                </li>
+                <li v-if="htmlPage!='editor3'">
+                    <a href="[[=URL('folders')]]">
+                        <span class="icon is-small">
+                            <i class="fa fa-folder" aria-hidden="true"></i>
+                        </span>
+                        <span>Folders</span>
+                    </a>
+                </li>
+
+                <li v-if="htmlPage=='editor'">
+                    <a href="[[=URL('folders/mynotebooks')]]">
+                        <span class="icon is-small">
+                            <i class="fa fa-folder-open" aria-hidden="true"></i>
+                        </span>
+                        <span>My Notebooks</span>
+                    </a>
+                </li>
+                <li v-if="htmlPage =='editor2'">
+                    <a href="[[=URL('folders/sharednotebooks')]]">
+                        <span class="icon is-small">
+                            <i class="fa fa-folder-open" aria-hidden="true"></i>
+                        </span>
+                        <span>Shared Notebooks</span>
+                    </a>
+                </li>
+                <li v-if="htmlPage =='editor3'">
+                    <a href="[[=URL('publicnotebooks')]]">
+                        <span class="icon is-small">
+                            <i class="fa fa-folder-open" aria-hidden="true"></i>
+                        </span>
+                        <span>Public Notebooks</span>
+                    </a>
+                </li>
+
+                <li class="is-active">
+                    <a href="">
+                        <span class="icon is-small">
+                            <i class="fa fa-book" aria-hidden="true"></i>
+                        </span>
+                        <span>Notebook</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <br />
+    <br />
+    <div class="container">
+        <section class="hero is-dark">
+            <div class="hero-body">
+                <div class="has-text-right">
+                    <div class="dropdown is-hoverable is-right" :class="getValue('state')" v-if="editorBook != null">
+                        <div class="dropdown-trigger">
+                            <a aria-haspopup="true" aria-controls="dropdown-menu4">
+                                <span class="icon has-text-light">
+                                    <i class="fa fa-cog fa-2x" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                            <div class="dropdown-content has-text-left">
+                                <a v-if="canEdit" class="dropdown-item" @click="editNotebook()">
+                                    <i class="fa fa-pencil" aria-hidden="true"></i> Edit Notebook
+                                </a>
+                                <hr v-if="canView & canEdit" class="dropdown-divider" />
+                                <a v-if="canView & htmlPage == 'editor'" class="dropdown-item" @click="setModal(1)">
+                                    <i class="fa fa-upload" aria-hidden="true"></i> Import Notebook
+                                </a>
+                                <hr v-if="canView & htmlPage == 'editor'" class="dropdown-divider" />
+                                <a v-if="canView" class="dropdown-item" @click="setModal(2)">
+                                    <i class="fa fa-download" aria-hidden="true"></i> Export Notebook
+                                </a>
+                                <hr v-if="canView && htmlPage != 'editor3'" class="dropdown-divider" />
+                                <a v-if="canEdit & htmlPage=='editor'" class="dropdown-item" @click="setModal(3)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Delete Notebook
+                                </a>
+                                <a v-if="htmlPage == 'editor2'" class="dropdown-item" @click="setModal(4)">
+                                    <i class="fa fa-trash" aria-hidden="true"></i> Remove Notebook
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="title has-text-centered">
+                    {{getBookTitle()}}
+                </div>
+                <div v-if="tempNote2 != null">
+                    <div class="columns">
+                        <div class="column"></div>
+                        <div class="column">
+                            <input class="input is-medium has-text-centered comic-sans" type="text" placeholder="Name" v-model="tempNote2.title" />
+                        </div>
+                        <div class="column"></div>
+                    </div>
+                </div>
+                <h2 class="subtitle has-text-centered" v-if="editorBook != null">
+                    <span v-if="editorBook.state == 0 & canView">{{editorBook.description}}</span>
+                </h2>
+                <div v-if="tempNote2 != null && editorBook != null">
+                    <div class="columns">
+                        <div class="column is-1"></div>
+                        <div class="column">
+                            <textarea class="textarea comic-sans" placeholder="Description" v-model="tempNote2.description"></textarea>
+                            <br />
+
+                            <div class="has-text-centered">
+                                <a class="button is-success" @click="saveNotebook()"> <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbsp;Update </a>
+                                <a class="button is-danger" @click="tempNote2=null; editing = false; editorBook.state = 0"> <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Cancel </a>
+                            </div>
+                        </div>
+                        <div class="column is-1"></div>
+                    </div>
+                    <br />
+                </div>
+                <div v-if="tempNote2 != null">
+                    <a class="button is-warning" @click="setValue('star', tempNote2)" v-if="htmlPage =='editor'">
+                        <span v-if="getValue('star',tempNote2) != 'is-warning'">
+                            <i class="fa fa-star-o" aria-hidden="true"></i>&nbspSet Favorite
+                        </span>
+                        <span v-if="getValue('star',tempNote2) == 'is-warning'">
+                            <i class="fa fa-star" aria-hidden="true"></i>&nbspFavorited
+                        </span>
+                    </a>
+                    <br />
+                    <br />
+                </div>
+                <div v-if="editorBook != null">
+                    <div class="tile notification" :class="getValue('star',editorBook)" v-if="editorBook.state == 0 & htmlPage =='editor'"></div>
+                    <div class="tile notification" :class="getValue('star',tempNote2)" v-if="tempNote2 != null & htmlPage =='editor'"></div>
+                    <div class="tile notification" v-if="editorBook.state == 0 & htmlPage !='editor'"></div>
+                    <div class="tile notification" v-if="tempNote2 != null & htmlPage !='editor'"></div>
+                </div>
+            </div>
+        </section>
+        <br />
+        <div class="columns">
+            <div class="column is-3"></div>
+            <div class="column">
+                <a class="box" v-for="tempPage in notePages" :href="getLink('notePage', tempPage)">
+                    <i class="title">{{getValue("page",tempPage)}}</i>
+                    <div class="title has-text-centered">
+                        {{tempPage["title"]}}
+                    </div>
+                    <br />
+                </a>
+                <div class="box" v-if="tempNote != null">
+                    <div class="title has-text-centered">Notes</div>
+                    <br />
+                    <input class="input is-medium comic-sans" type="text" placeholder="Name" v-model="tempNote.title" />
+                    <br />
+                    <br />
+                    <div class="subtitle">Select type</div>
+                    <div class="tabs is-toggle is-toggle-rounded">
+                        <ul>
+                            <li :class="getValue('tab',0)">
+                                <a @click="setValue('tab',0)">
+                                    <span>Notes</span>
+                                </a>
+                            </li>
+                            <li :class="getValue('tab',1)">
+                                <a @click="setValue('tab',1)">
+                                    <span>Flashcards</span>
+                                </a>
+                            </li>
+
+                            <li :class="getValue('tab',2)">
+                                <a @click="setValue('tab',2)">
+                                    <span>Grammar</span>
+                                </a>
+                            </li>
+                            <li :class="getValue('tab',3)">
+                                <a @click="setValue('tab',3)">
+                                    <span>Vocabulary</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <br />
+                    <br />
+                    <div>
+                        <a class="button is-success" @click="saveNotePage()"> <i class="fa fa-plus-circle" aria-hidden="true"></i>&nbspCreate </a>
+                        <a class="button is-danger" @click="tempNote=null; editing = false;"> <i class="fa fa-times" aria-hidden="true"></i>&nbspCancel </a>
+                    </div>
+                </div>
+                <div class="has-text-centered">
+                    <div v-if="canEdit" class="button is-large is-dark is-outlined" @click="addNotePage()"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</div>
+                </div>
+            </div>
+            <div class="column is-3"></div>
+        </div>
+    </div>
+</div>
+
+[[block page_scripts]]
+<script>
+    let homePageSlash = "[[=URL('')]]";
+    let user_status = "[[=XML(user_status)]]";
+    let htmlPage = "[[=XML(htmlPage)]]";
+
+    let basePath1 = "[[=URL('folders/mynotebooks/editor', vars=dict(notebook=''))]]";
+    let basePath2 = "[[=URL('folders/sharednotebooks/editor', vars=dict(notebook=''))]]";
+    let basePath3 = "[[=URL('guest/editor', vars=dict(notebook=''))]]";
+
+    let basePathN = "[[=URL('notes')]]";
+    let basePathF = "[[=URL('flashcards')]]";
+    let basePathG = "[[=URL('grammar')]]";
+    let basePathV = "[[=URL('vocabulary')]]";
+
+
+    let notebookPath = "[[=URL('folders')]]";
+    let myNotebookPath = "[[=URL('folders/mynotebooks')]]";
+    let sharedNotebookPath = "[[=URL('folders/sharednotebooks')]]";
+    let delete_notebook = "[[=XML(delete_notebook)]]";
+
+    let save_notebook = "[[=XML(save_notebook)]]";
+    let get_notebooks = "[[=XML(get_notebooks)]]";
+    let save_note_page = "[[=XML(save_note_page)]]";
+    let get_note_pages = "[[=XML(get_note_pages)]]";
+    let get_notes = "[[=XML(get_notes)]]";
+    let get_notes_all = "[[=XML(get_notes_all)]]";
+    let notebook_number = "[[=XML(notebook_number)]]";
+    let respond_type = "[[=XML(respond_type)]]";
+    let remove_notebook = "[[=XML(remove_notebook)]]";
+    let import_notebook = "[[=XML(import_notebook)]]";
+</script>
+<script src="js/html/editor.js"></script>
+[[end]]
