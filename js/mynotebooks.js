@@ -9,12 +9,10 @@ let init = (app) =>
         tempNote: null, 
         tempNote2: null,
         editing: false,
-
         notebooks: [], 
         notebooks1: [], 
         notebooks2: [],
         sharedNotebooks: [], 
-        
         myNotebooksTab: 0,
     };
 
